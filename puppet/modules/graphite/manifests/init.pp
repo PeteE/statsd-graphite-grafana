@@ -31,7 +31,7 @@ class graphite (
     exec { "create-django-db":
         cwd => "${storage_dir}",
         command => "python /usr/lib/python2.6/site-packages/graphite/manage.py syncdb --noinput",
-        #creates => "${storage_dir}/graphite.db",
+        creates => "${storage_dir}/graphite.db",
         require => File["${storage_dir}/initial_data.json"],
         notify => Exec["chown-django-db"],
     }
