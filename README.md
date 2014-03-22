@@ -4,17 +4,16 @@ scripts for installing statsd/graphite/grafana on an Amazon Linux AMI.
 
 Launch/configure via Packer
 ==============
-$ brew tap homebrew/binary
-$ brew install packer
+    brew tap homebrew/binary
+    brew install packer
 
 Create box
 ==============
-#!/bin/bash
-packer build \
-    -debug \
-    -var 'aws_access_key=your_aws_key' \
-    -var 'aws_secret_key=your_aws_secret' \
-    statsd.json
+    packer build \
+        -debug \
+        -var 'aws_access_key=your_aws_key' \
+        -var 'aws_secret_key=your_aws_secret' \
+        statsd.json
 
 
 This will do the following:
@@ -26,9 +25,9 @@ This will do the following:
 
 Notes
 ======
-If you don't wnat to use packer you can launch image `ami-bba18dd`, clone the git repo, run the commands sited in the shell provisioner and run puppet with:
+If you don't wnat to use packer you can launch image `ami-bba18dd`, clone the git repo, run the commands in the shell provisioner to bootstrap, then run puppet with:
 
-`puppet apply --hiera_config hiera_config.yaml --modulepath puppet/modules puppet/manifests/statsd.pp`
+`puppet apply --hiera_config puppet/hiera_config.yaml --modulepath puppet/modules puppet/manifests/statsd.pp`
 
 You'll also want to open the appropriate firewall rules:
 * 80 (tcp) - httpd
