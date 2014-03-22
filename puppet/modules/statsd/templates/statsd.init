@@ -1,0 +1,79 @@
+#!/bin/sh
+#
+# statsd - this script starts and stops the statsd nodejs daemon
+#
+# chkconfig:   - 85 15
+# description: statsd
+# processname: node 
+# config: 
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ "$NETWORKING" = "no" ] && exit 0
+
+node="/usr/bin/node"
+prog=statsd
+
+STATSD_USER=<%= @statsd_user %>
+INSTALL_DIR=<%= @install_dir %>
+STATSD_JS_FILE="stats.js"
+STATSD_CONFIG_FILE="local.js"
+LOGDIR="/var/log/${prog}"
+LOGFILE="${LOGDIR}/${prog}.log"
+PIDDIR=/var/run/${prog}
+PIDFILE=${PIDDIR}/${prog}.pid
+lockfile=/var/lock/subsys/${prog}
+
+start() {
+    if [ ! -d $LOGDIR ]; then
+        mkdir -p $LOGDIR
+        chown $STATSD_USER ${LOGDIR}
+    fi
+    if [ ! -d ${PIDDIR} ]; then
+        mkdir ${PIDDIR}
+    fi
+
+    echo -n $"Starting $prog: "
+    daemon /usr/sbin/daemonize -a -p ${PIDFILE} -l ${lockfile} -u ${STATSD_USER} -e ${LOGFILE} -o ${LOGFILE} -c ${INSTALL_DIR} ${node} "${STATSD_JS_FILE} ${STATSD_CONFIG_FILE}" 
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && touch $lockfile
+    return $retval
+}
+
+stop() {
+    echo -n $"Stopping $prog: "
+    killproc -p ${PIDFILE} $(basename $node)
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && rm -f $lockfile
+    return $retval
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+    start)
+        $1
+        ;;
+    stop)
+        $1
+        ;;
+    restart)
+        $1
+        ;;
+    status)
+        status -p ${PIDFILE} $prog
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart}"
+        exit 2
+esac

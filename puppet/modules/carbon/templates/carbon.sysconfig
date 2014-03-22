@@ -1,0 +1,4 @@
+# Configuration file for carbon
+
+CONFIG=<%= @config %>
+LOG_DIR=<%= @logdir %>

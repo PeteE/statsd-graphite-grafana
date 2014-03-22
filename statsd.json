@@ -1,0 +1,44 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "ssh_timeout": "5m",
+    "region": "us-east-1",
+    "source_ami": "ami-bba18dd2",
+    "instance_type": "t1.micro",
+    "ssh_username": "ec2-user",
+    "ami_name": "packer-statsd-{{timestamp}}"
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "{{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+        "sleep 30",
+        "rpm --import https://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs",
+        "rpm -ivh https://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-7.noarch.rpm",
+        "yum-config-manager --enable puppetlabs-products --setopt='puppetlabs-products.priority=1'",
+        "yum-config-manager --enable puppetlabs-deps --setopt='puppetlabs-deps.priority=1'",
+        "yum install -y puppet",
+        "yum-config-manager --enable epel"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "puppet/hieradata",
+      "destination": "/tmp/hieradata"
+    },
+    {
+      "type": "puppet-masterless",
+      "manifest_file": "puppet/manifests/statsd.pp",
+      "manifest_dir": "puppet/manifests",
+      "module_paths": ["puppet/modules"],
+      "hiera_config_path": "puppet/hiera_config.yaml"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+    "graphite::django_secret_key": "45678",
+    "grafana::graphite_hostname": "graphite.example.org",
+    "grafana::grafana_hostname": "stats.example.org"
+}
