@@ -85,8 +85,8 @@ CONTENT_DIR = '/usr/share/graphite/webapp/content'
 #INDEX_FILE = '/opt/graphite/storage/index'  # Search index file
 #WHISPER_DIR = '/var/lib/carbon/whisper/'
 #RRD_DIR = '/var/lib/carbon/rrd'
-WHISPER_DIR = '<%= @whisper_dir %>'
-RRD_DIR = '<%= @rrd_dir %>'
+WHISPER_DIR = '<%= @whisper_storage_dir %>'
+RRD_DIR = '<%= @rrd_storage_dir %>'
 DATA_DIRS = [WHISPER_DIR, RRD_DIR] # Default: set from the above variables
 LOG_DIR = '/var/log/graphite-web/'
 INDEX_FILE = '/var/lib/graphite-web/index'  # Search index file
