@@ -3,6 +3,9 @@ class grafana (
     $graphite_hostname = "graphite.example.org",
     $grafana_hostname = "stats.example.org", 
 ) {
+
+    import "graphite"
+
     vcsrepo { "${install_dir}":
         ensure => present,
         provider => git,
@@ -22,7 +25,7 @@ class grafana (
         group => root,
         mode => 0644,
         content => template("grafana/grafana.conf"),
-        require => Vcsrepo["${install_dir}"],
+        require => [Package["httpd24"], Vcsrepo["${install_dir}"]],
         notify => Service["httpd"],
     }
 }

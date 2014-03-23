@@ -1,5 +1,5 @@
 class graphite (
-    $packages = ['graphite-web', 'httpd24'],
+    $packages = ['graphite-web'],
     $django_secret_key = '12345',
     $conf_dir = '/etc/graphite-web',
     $storage_dir = '/var/lib/graphite-web',
@@ -8,8 +8,12 @@ class graphite (
     $apache_user = 'apache',
     $graphite_hostname = 'graphite.example.org',
 ) {
+    package { "httpd24":
+       ensure => installed,
+    }
     package { $packages:
         ensure => installed,
+        require => Package["httpd24"],
     }
     file { "${conf_dir}/local_settings.py":
         ensure => file,
