@@ -11,6 +11,6 @@ node default {
         'carbon::memcached': stage => main;
         'elasticsearch': stage => main;
         'statsd': stage => main;
-        'grafana': stage => main;
+        'grafana': stage => post;
     }
 }
